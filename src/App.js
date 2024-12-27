@@ -16,7 +16,7 @@ function App() {
     {
       path: "/",
       element: < Navbar />,
-     
+      errorElement: <ErrorPage />, 
       children: [
         {
           path: "",
