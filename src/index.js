@@ -1,19 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
-import 'bootstrap/dist/css/bootstrap.min.css'
 import App from './App';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Resturant from './Components/Resturant/Resturant';
 
 
+// let router = createBrowserRouter([
+//   {
+//     path: "/",
+//    element: <App/>
+//   },
+//   {
+//     path: "/Resturant",
+//    element: <Resturant/>
+//   },
 
+// ]);
 
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <App/>
-  // <Provider store={store}>
-  //   <RouterProvider router={router} />
-  // </Provider>
+  <App />
+
+
 );
 
 
