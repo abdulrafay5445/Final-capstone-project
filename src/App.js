@@ -22,7 +22,10 @@ function App() {
           path: "",
           element: <Homepage />,
         },
-      
+        {
+          path: "/Resturant",
+          element: <Resturant />,
+        },
       ],
     },
   ]);
