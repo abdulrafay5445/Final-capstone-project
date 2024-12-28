@@ -204,7 +204,7 @@ const Product = () => {
                     {product.strMeal}
                   </Typography>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     sx={{
                       textAlign: "center",
                       fontWeight: "bold",
@@ -212,7 +212,7 @@ const Product = () => {
                       color: "#FF4081",
                     }}
                   >
-                    ₹450
+                    Rs: 890.00
                   </Typography>
 
                   <Box
@@ -287,48 +287,97 @@ const Product = () => {
       </Modal>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 320,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-          }}
-        >
-          <IconButton
-            onClick={() => setModalOpen(false)}
-            sx={{ position: "absolute", top: 8, right: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            sx={{ mb: 2, fontWeight: "bold", color: "#333" }}
-          >
-            Enter your email to add this item to your cart:
-          </Typography>
-          <TextField
-            fullWidth
-            label="Email"
-            variant="outlined"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{ mt: 2, backgroundColor: "#FF4081" }}
-            onClick={handleEmailSubmit}
-          >
-            Add to Cart
-          </Button>
-        </Box>
-      </Modal>
+  <Box
+    sx={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: 360,
+      bgcolor: "background.paper",
+      boxShadow: 24,
+      p: 4,
+      borderRadius: 3,
+      background: "linear-gradient(135deg, #FFE0E8, #FF80AB)",
+      color: "#333",
+      textAlign: "center",
+    }}
+  >
+    <IconButton
+      onClick={() => setModalOpen(false)}
+      sx={{
+        position: "absolute",
+        top: 8,
+        right: 8,
+        color: "#FF4081",
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+
+    <Typography
+      variant="h6"
+      sx={{
+        mb: 3,
+        fontWeight: "bold",
+        color: "#880E4F",
+      }}
+    >
+      Add Item to Your Cart
+    </Typography>
+
+    <Typography
+      variant="body2"
+      sx={{
+        mb: 3,
+        color: "#AD1457",
+      }}
+    >
+      Enter your email to continue.
+    </Typography>
+
+    <TextField
+      fullWidth
+      label="Email"
+      variant="outlined"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      sx={{
+        mb: 2,
+        ".MuiOutlinedInput-root": {
+          borderRadius: "12px",
+          backgroundColor: "#FFF5F7",
+        },
+        ".MuiInputLabel-root": {
+          color: "#AD1457",
+        },
+        ".MuiOutlinedInput-notchedOutline": {
+          borderColor: "#FF80AB",
+        },
+      }}
+    />
+
+    <Button
+      variant="contained"
+      sx={{
+        mt: 2,
+        width: "100%",
+        backgroundColor: "#FF4081",
+        color: "#fff",
+        fontWeight: "bold",
+        padding: "10px",
+        borderRadius: "8px",
+        "&:hover": {
+          backgroundColor: "#F50057",
+        },
+      }}
+      onClick={handleEmailSubmit}
+    >
+      Add to Cart
+    </Button>
+  </Box>
+</Modal>
+
 
       <LoginModal open={loginModalOpen} handleClose={() => setLoginModalOpen(false)} />
     </Box>

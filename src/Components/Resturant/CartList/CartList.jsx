@@ -1,144 +1,245 @@
-// import React from 'react';
-// import { Drawer, Box, Typography, IconButton, List, ListItem, ListItemText, Divider, ListItemAvatar, Avatar, Button, ButtonGroup } from '@mui/material';
-// import CloseIcon from '@mui/icons-material/Close';
-// import { useDispatch, useSelector } from 'react-redux';
-// import AddIcon from '@mui/icons-material/Add';
-// import RemoveIcon from '@mui/icons-material/Remove';
-// import DeleteIcon from '@mui/icons-material/Delete';
-// import { decreaseQuantity, increaseQuantity, removeProduct } from '../../Slices/productSlice';
-
-// function CartList({ open, handleClose }) {
-//   const items = useSelector((state) => state.products.items);
-//   const dispatch = useDispatch();
-
-//   return (
-//     <Drawer anchor="right" open={open} onClose={handleClose}>
-//       <Box sx={{ width: 300 }} role="presentation">
-//         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px' }}>
-//           <Typography variant="h6">Shopping Cart</Typography>
-//           <IconButton onClick={handleClose}>
-//             <CloseIcon />
-//           </IconButton>
-//         </Box>
-
-//         <Divider />
-
-//         <List>
-//           {items && items.length > 0 ? (
-//             items.map((item, index) => (
-//               <ListItem key={index}>
-//                 <ListItemAvatar>
-//                   <Avatar src={item.strMealThumb} alt={item.strMeal} />
-//                 </ListItemAvatar>
-//                 <ListItemText primary={item.strMeal} secondary={`$${item.price}`} />
-
-//                 <ButtonGroup variant="text" aria-label="Basic button group">
-//                   <Button onClick={() => dispatch(decreaseQuantity(item))}>
-//                     <RemoveIcon />
-//                   </Button>
-//                   <Button>{item.quantity}</Button>
-//                   <Button onClick={() => dispatch(increaseQuantity(item))}>
-//                     <AddIcon />
-//                   </Button>
-//                 </ButtonGroup>
-
-//                 <IconButton onClick={() => dispatch(removeProduct(item))} color="error">
-//                   <DeleteIcon />
-//                 </IconButton>
-//               </ListItem>
-//             ))
-//           ) : (
-//             <Typography sx={{ padding: '16px', textAlign: 'center' }}>Your cart is empty.</Typography>
-//           )}
-//         </List>
-//       </Box>
-//     </Drawer>
-//   );
-// }
-
-// export default CartList;
-
-
-
-
-
-import React from 'react';
-import { Drawer, Box, Typography, IconButton, List, ListItem, ListItemText, Divider, ListItemAvatar, Avatar, Button, ButtonGroup } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useDispatch, useSelector } from 'react-redux';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { decreaseQuantity, increaseQuantity, removeProduct } from '../../Slices/productSlice';
+import React, { useState } from "react";
+import {
+  Drawer,
+  Box,
+  Typography,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  ListItemAvatar,
+  Avatar,
+  Button,
+  ButtonGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { useDispatch, useSelector } from "react-redux";
+import { decreaseQuantity, increaseQuantity, removeProduct } from "../../Slices/productSlice";
 
 function CartList({ open, handleClose }) {
   const items = useSelector((state) => state.products.items);
   const dispatch = useDispatch();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [address, setAddress] = useState("");
+  const [addressError, setAddressError] = useState(false); // Track address validation error
+  const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false);
+
   // Calculate the total price
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
+  const handleOpenModal = () => {
+    if (items.length > 0) {
+      setIsModalOpen(true);
+      setIsCheckoutSuccess(false); // Reset success state for new checkouts
+      setAddressError(false); // Reset error state when reopening
+    }
+  };
+
+  const handleCheckout = () => {
+    if (!address.trim()) {
+      setAddressError(true); // Set error if address is empty
+    } else {
+      setIsCheckoutSuccess(true);
+      setAddressError(false); // Reset error on successful validation
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setAddress(""); // Reset address input on close
+    setAddressError(false); // Reset error state on close
+  };
+
   return (
-    <Drawer anchor="right" open={open} onClose={handleClose}>
-      <Box sx={{ width: 350, display: 'flex', flexDirection: 'column', height: '100%' }} role="presentation">
-        {/* Header Section */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', backgroundColor: '#f5f5f5' }}>
-          <Typography variant="h6">Shopping Cart</Typography>
-          <IconButton onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-
-        <Divider />
-
-        {/* Cart Items List */}
-        <List sx={{ flexGrow: 1, overflowY: 'auto' }}>
-          {items && items.length > 0 ? (
-            items.map((item, index) => (
-              <ListItem key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px' }}>
-                <ListItemAvatar>
-                  <Avatar src={item.strMealThumb} alt={item.strMeal} />
-                </ListItemAvatar>
-                <ListItemText primary={item.strMeal}  sx={{ maxWidth: '150px' }} />
-                
-                <ButtonGroup variant="outlined" aria-label="quantity buttons">
-                  <Button onClick={() => dispatch(decreaseQuantity(item))} sx={{ minWidth: '30px' }}>
-                    <RemoveIcon />
-                  </Button>
-                  <Button sx={{ minWidth: '30px' }} disabled>{item.quantity}</Button>
-                  <Button onClick={() => dispatch(increaseQuantity(item))} sx={{ minWidth: '30px' }}>
-                    <AddIcon />
-                  </Button>
-                </ButtonGroup>
-
-                <IconButton onClick={() => dispatch(removeProduct(item))} color="error" sx={{ marginLeft: '12px' }}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItem>
-            ))
-          ) : (
-            <Typography sx={{ padding: '16px', textAlign: 'center', fontStyle: 'italic' }}>Your cart is empty.</Typography>
-          )}
-        </List>
-
-        <Divider />
-
-        {/* Total Price Section */}
-        {items.length > 0 && (
-          <Box sx={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6">Total Price:</Typography>
-            <Typography variant="h6" color="primary">${totalPrice.toFixed(2)}</Typography>
+    <>
+      <Drawer anchor="right" open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            width: 350,
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            backgroundColor: "#fce4ec", // Light pink background for the drawer
+          }}
+          role="presentation"
+        >
+          {/* Header Section */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "16px",
+              backgroundColor: "#f8bbd0", // Medium pink background for the header
+            }}
+          >
+            <Typography variant="h6" color="#880e4f">
+              Shopping Cart
+            </Typography>
+            <IconButton onClick={handleClose}>
+              <CloseIcon sx={{ color: "#880e4f" }} />
+            </IconButton>
           </Box>
-        )}
 
-        {/* Footer Section */}
-        <Box sx={{ padding: '16px', textAlign: 'center'  }}>
-          <Button sx={{backgroundColor:"#e01b6f"}} fullWidth variant="contained"  onClick={handleClose}>
-            Proceed to Checkout
-          </Button>
+          <Divider />
+
+          {/* Cart Items List */}
+          <List sx={{ flexGrow: 1, overflowY: "auto", backgroundColor: "#fce4ec" }}>
+            {items && items.length > 0 ? (
+              items.map((item, index) => (
+                <ListItem
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "12px",
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar src={item.strMealThumb} alt={item.strMeal} />
+                  </ListItemAvatar>
+                  <ListItemText primary={item.strMeal} sx={{ maxWidth: "150px" }} />
+
+                  <ButtonGroup variant="outlined" aria-label="quantity buttons">
+                    <Button onClick={() => dispatch(decreaseQuantity(item))} sx={{ minWidth: "30px" }}>
+                      <RemoveIcon sx={{ color: "#880e4f" }} />
+                    </Button>
+                    <Button sx={{ minWidth: "30px", color: "#880e4f" }} disabled>
+                      {item.quantity}
+                    </Button>
+                    <Button onClick={() => dispatch(increaseQuantity(item))} sx={{ minWidth: "30px" }}>
+                      <AddIcon sx={{ color: "#880e4f" }} />
+                    </Button>
+                  </ButtonGroup>
+
+                  <IconButton onClick={() => dispatch(removeProduct(item))} color="error" sx={{ marginLeft: "12px" }}>
+                    <DeleteIcon sx={{ color: "#d81b60" }} />
+                  </IconButton>
+                </ListItem>
+              ))
+            ) : (
+              <Typography sx={{ padding: "16px", textAlign: "center", fontStyle: "italic", color: "#880e4f" }}>
+                Your cart is empty.
+              </Typography>
+            )}
+          </List>
+
+          <Divider />
+
+          {/* Total Price Section */}
+          {items.length > 0 && (
+            <Box
+              sx={{
+                padding: "16px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                backgroundColor: "#f8bbd0", // Pink background for total price section
+              }}
+            >
+              <Typography variant="h6" color="#880e4f">
+                Total Price:
+              </Typography>
+              <Typography variant="h6" color="#d81b60">
+                Rs:{totalPrice.toFixed(2)}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Footer Section */}
+          <Box sx={{ padding: "16px", textAlign: "center" }}>
+            <Button
+              sx={{
+                backgroundColor: "#d81b60",
+                "&:hover": { backgroundColor: "#c2185b" },
+              }}
+              fullWidth
+              variant="contained"
+              onClick={handleOpenModal}
+              disabled={items.length === 0}
+            >
+              Proceed to Checkout
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    </Drawer>
+      </Drawer>
+
+      {/* Address Modal */}
+      <Dialog open={isModalOpen} onClose={handleCloseModal}>
+        <DialogTitle
+          sx={{
+            backgroundColor: "#f8bbd0",
+            textAlign: "center",
+            fontWeight: "bold",
+            color: "#880e4f",
+          }}
+        >
+          {isCheckoutSuccess ? (
+            <Typography color="green">
+              <CheckCircleOutlineIcon /> Your product is on the way!
+            </Typography>
+          ) : (
+            "Confirm Delivery Address"
+          )}
+        </DialogTitle>
+        {!isCheckoutSuccess && (
+          <DialogContent sx={{ backgroundColor: "#fce4ec" }}>
+            <TextField
+              fullWidth
+              label="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              error={addressError} // Highlight error field
+              helperText={addressError && "Please enter your delivery address"} // Show validation message
+              sx={{ marginBottom: 2 }}
+            />
+          </DialogContent>
+        )}
+        <DialogActions sx={{ backgroundColor: "#f8bbd0", justifyContent: "center" }}>
+          {!isCheckoutSuccess ? (
+            <Button
+              onClick={handleCheckout}
+              variant="contained"
+              sx={{
+                backgroundColor: "#d81b60",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#c2185b",
+                },
+              }}
+            >
+              Checkout
+            </Button>
+          ) : (
+            <Button
+              onClick={handleCloseModal}
+              variant="contained"
+              sx={{
+                backgroundColor: "#d81b60",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#c2185b",
+                },
+              }}
+            >
+              Close
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 

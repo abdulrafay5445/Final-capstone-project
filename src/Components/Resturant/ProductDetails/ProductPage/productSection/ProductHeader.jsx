@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, Stack, Button, Dialog, Card, CardContent, CardMedia, TextField, Tabs, Tab } from '@mui/material';
 import { Breadcrumbs, Link } from '@mui/material';
+import Paratha from '../../../../../Images/paratha.webp';
+import Map from '../../../../../Images/map.png';
+
 import { Icon } from '@iconify/react';
 import StarIcon from '@mui/icons-material/Star';
 import InfoIcon from '@mui/icons-material/Info';
@@ -30,7 +33,7 @@ const ProductHeader = () => {
     }}>
       {/* Breadcrumb Navigation */}
       <Breadcrumbs aria-label="breadcrumb" sx={{ marginBottom: '1rem', paddingLeft: '10px' }}>
-        <Link underline="hover" color="inherit" href="#">Homepage</Link>
+        <Link underline="hover" color="inherit" href="http://localhost:3000/">Homepage</Link>
         <Link underline="hover" color="inherit" href="#">Lahore</Link>
         <Typography color="text.primary">Quetta Paratha - 111</Typography>
       </Breadcrumbs>
@@ -43,7 +46,7 @@ const ProductHeader = () => {
         flexDirection: { xs: 'row', sm: 'row' }
       }}>
         <Grid item xs="auto">
-          <Box component="img" src="QuettaFood.jpg" alt="Quetta Paratha" sx={{
+          <Box component="img" src={Paratha} alt="Quetta Paratha" sx={{
             width: { xs: '150px', sm: '180px' },
             height: { xs: '150px', sm: '180px' },
             borderRadius: '8px',
@@ -114,7 +117,7 @@ const ProductHeader = () => {
                 <Typography variant="body2" color="textSecondary">00:00 – 23:59</Typography>
               </Box>
               <Box mt={2} display="flex" alignItems="center"><i className="fas fa-map-marker-alt" style={{ color: 'red', marginRight: 8 }}></i><Typography variant="body2" color="textPrimary"><LocationOnIcon /> Market, Cavalry Ground.</Typography></Box>
-              <Box mt={2}><CardMedia component="img" height="140" src="QuettaMap.jpg" alt="Map showing the location of Mini Market, Cavalry Ground with nearby landmarks and streets." /></Box>
+              <Box mt={2}><CardMedia component="img" height="140" src={Map} alt="Map showing the location of Mini Market, Cavalry Ground with nearby landmarks and streets." /></Box>
               <Box mt={2}><Typography variant="body1" fontWeight="bold">Delivery fee</Typography><Typography variant="body2" color="textSecondary">Delivery fee is charged based on time of day, distance, and surge conditions</Typography></Box>
               <Box mt={2}><Typography variant="body1" fontWeight="bold">Minimum order</Typography><Typography variant="body2" color="textSecondary">For orders below Rs. 249.00, we charge a small order fee.</Typography></Box>
             </CardContent>

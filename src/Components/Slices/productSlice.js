@@ -20,7 +20,7 @@ export const productSlice = createSlice({
         state.items.push({ 
           ...action.payload, 
           quantity: 1, 
-          price: 450 // Fixed price for all products
+          price: 950 // Fixed price for all products
         });
         state.cartToastMessage = 'Product added to cart successfully!';
       }

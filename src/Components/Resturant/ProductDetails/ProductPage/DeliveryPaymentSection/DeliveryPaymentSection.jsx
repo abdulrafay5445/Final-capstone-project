@@ -12,11 +12,13 @@ import {
   Avatar,
   ListItemText,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
 } from "@mui/material";
+
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -28,25 +30,37 @@ import {
   removeProduct,
 } from "../../../../Slices/productSlice";
 
+
 const DeliveryPaymentSection = () => {
   const items = useSelector((state) => state.products.items);
   const dispatch = useDispatch();
-  const [openModal, setOpenModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [address, setAddress] = useState("");
-  const [checkoutMessage, setCheckoutMessage] = useState("");
+  const [isCheckoutSuccessful, setIsCheckoutSuccessful] = useState(false);
 
   // Calculate total price of the cart
   const totalPrice = items.reduce(
-    (acc, item) => acc + item.price * item.quantity, 0
+    (acc, item) => acc + item.price * item.quantity,
+    0
   );
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const handleOpenModal = () => {
+    if (items.length > 0) {
+      setIsModalOpen(true);
+    }
   };
 
-  const handleConfirmAddress = () => {
-    setCheckoutMessage("Your product is on the way!");
-    setOpenModal(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setIsCheckoutSuccessful(false); // Reset success state
+  };
+
+  const handleCheckout = () => {
+    setIsCheckoutSuccessful(true);
+    setTimeout(() => {
+      setIsModalOpen(false);
+      setIsCheckoutSuccessful(false);
+    }, 2000); // Close the modal after 2 seconds
   };
 
   return (
@@ -87,8 +101,6 @@ const DeliveryPaymentSection = () => {
             padding: "10px 40px",
             backgroundColor: "#4caf50",
             color: "white",
-            transition: "all 0.3s",
-            fontSize: "0.875rem",
             "&:hover": {
               backgroundColor: "#45a049",
             },
@@ -96,7 +108,6 @@ const DeliveryPaymentSection = () => {
         >
           Delivery
         </Button>
-
         <Button
           sx={{
             textTransform: "none",
@@ -104,7 +115,6 @@ const DeliveryPaymentSection = () => {
             border: "1px solid #ddd",
             borderRadius: 2,
             padding: "10px 40px",
-            fontSize: "0.875rem",
             "&:hover": {
               color: "#D60E64",
             },
@@ -174,20 +184,14 @@ const DeliveryPaymentSection = () => {
                   color: "#d32f2f",
                   marginLeft: 2,
                 }}
-                aria-label="remove product"
               >
                 <DeleteIcon />
               </IconButton>
             </ListItem>
           ))
         ) : (
-          <Typography
-            sx={{
-              padding: 2,
-              textAlign: "center",
-              color: "#888",
-            }}
-          >
+          <Typography sx={{ padding: 2, textAlign: "center", color: "#888" }}>
+      
             Your cart is empty.
           </Typography>
         )}
@@ -202,33 +206,9 @@ const DeliveryPaymentSection = () => {
             alignItems: "center",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              sx={{ color: "#333" }}
-            >
-              Total
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                marginY: 1,
-                fontSize: "0.875rem",
-                paddingLeft: "5px",
-                fontWeight: "normal",
-              }}
-            >
-              (incl. fees and tax)
-            </Typography>
-          </Box>
+          <Typography variant="h6" fontWeight="bold" sx={{ color: "#333" }}>
+            Total
+          </Typography>
           <Typography
             variant="subtitle1"
             color="text.secondary"
@@ -239,12 +219,11 @@ const DeliveryPaymentSection = () => {
         </Box>
         <Button
           variant="contained"
-          onClick={() => setOpenModal(true)}
+          onClick={handleOpenModal}
           sx={{
             marginTop: 2,
             backgroundColor: "#1976d2",
             color: "white",
-            cursor: "pointer",
             width: "100%",
             padding: "14px",
             fontWeight: "bold",
@@ -257,37 +236,79 @@ const DeliveryPaymentSection = () => {
         </Button>
       </Box>
 
-      {/* Modal for Address Confirmation */}
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogTitle>Confirm Address</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Enter your address"
-            fullWidth
-            variant="outlined"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            sx={{ marginBottom: 2 }}
-          />
+      {/* Address Modal */}
+      <Dialog open={isModalOpen} onClose={handleCloseModal}>
+        <DialogTitle
+          sx={{
+            backgroundColor: "#f8bbd0",
+            color: "#880e4f",
+            textAlign: "center",
+            fontWeight: "bold",
+          }}
+        >
+          {isCheckoutSuccessful ? "Success!" : "Enter Delivery Address"}
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            padding: 3,
+            backgroundColor: "#fce4ec",
+            color: "#880e4f",
+            textAlign: "center",
+          }}
+        >
+          {isCheckoutSuccessful ? (
+            <Box>
+              <CheckCircleIcon
+                sx={{
+                  fontSize: 50,
+                  color: "green",
+                  marginBottom: 2,
+                }}
+              />
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "green",
+                  fontWeight: "bold",
+                }}
+              >
+                Your product is on the way!
+              </Typography>
+            </Box>
+          ) : (
+            <TextField
+              fullWidth
+              label="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              sx={{ marginBottom: 2 }}
+            />
+          )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmAddress} color="primary">
-            Confirm Address
-          </Button>
-        </DialogActions>
+        {!isCheckoutSuccessful && (
+          <DialogActions
+            sx={{
+              padding: 2,
+              justifyContent: "center",
+              backgroundColor: "#f8bbd0",
+            }}
+          >
+            <Button
+              onClick={handleCheckout}
+              variant="contained"
+              sx={{
+                backgroundColor: "#ad1457",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#880e4f",
+                },
+              }}
+            >
+              Checkout
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
-
-      {/* Checkout Message */}
-      {checkoutMessage && (
-        <Box sx={{ marginTop: 3, padding: 2, textAlign: "center" }}>
-          <Typography variant="h6" color="success.main">
-            {checkoutMessage}
-          </Typography>
-        </Box>
-      )}
     </Box>
   );
 };
