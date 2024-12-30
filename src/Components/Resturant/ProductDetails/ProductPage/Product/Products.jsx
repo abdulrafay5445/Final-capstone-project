@@ -30,7 +30,7 @@ const Product = () => {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [favoriteModalOpen, setFavoriteModalOpen] = useState(false);
@@ -80,12 +80,12 @@ const Product = () => {
     setModalOpen(true);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser.email) {
-      setEmail(storedUser.email);
+    if (storedUser && storedUser.deliveryAddress) {
+      setDeliveryAddress(storedUser.deliveryAddress);
     }
   };
 
-  const handleEmailSubmit = () => {
+  const handleAddressSubmit = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!storedUser) {
@@ -95,15 +95,15 @@ const Product = () => {
       return;
     }
 
-    if (email !== storedUser.email) {
-      toast.error("Enter the same email used during login.");
+    if (deliveryAddress.trim() === "") {
+      toast.error("Please enter a valid delivery address.");
       return;
     }
 
     dispatch(addProduct(selectedProduct));
     toast.success("Product added to cart successfully!");
     setModalOpen(false);
-    setEmail("");
+    setDeliveryAddress("");
   };
 
   const handleAddToFavorite = (product) => {
@@ -133,7 +133,6 @@ const Product = () => {
           fontWeight: "bold",
           fontSize: { xs: "1.5rem", sm: "2rem" },
           textAlign: "center",
-          
         }}
       >
         Popular Products
@@ -287,97 +286,96 @@ const Product = () => {
       </Modal>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-  <Box
-    sx={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: 360,
-      bgcolor: "background.paper",
-      boxShadow: 24,
-      p: 4,
-      borderRadius: 3,
-      background: "linear-gradient(135deg, #FFE0E8, #FF80AB)",
-      color: "#333",
-      textAlign: "center",
-    }}
-  >
-    <IconButton
-      onClick={() => setModalOpen(false)}
-      sx={{
-        position: "absolute",
-        top: 8,
-        right: 8,
-        color: "#FF4081",
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 360,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 3,
+            background: "linear-gradient(135deg, #FFE0E8, #FF80AB)",
+            color: "#333",
+            textAlign: "center",
+          }}
+        >
+          <IconButton
+            onClick={() => setModalOpen(false)}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "#FF4081",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
 
-    <Typography
-      variant="h6"
-      sx={{
-        mb: 3,
-        fontWeight: "bold",
-        color: "#880E4F",
-      }}
-    >
-      Add Item to Your Cart
-    </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 3,
+              fontWeight: "bold",
+              color: "#880E4F",
+            }}
+          >
+            Add Item to Your Cart
+          </Typography>
 
-    <Typography
-      variant="body2"
-      sx={{
-        mb: 3,
-        color: "#AD1457",
-      }}
-    >
-      Enter your email to continue.
-    </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 3,
+              color: "#AD1457",
+            }}
+          >
+            Enter your delivery address.
+          </Typography>
 
-    <TextField
-      fullWidth
-      label="Email"
-      variant="outlined"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      sx={{
-        mb: 2,
-        ".MuiOutlinedInput-root": {
-          borderRadius: "12px",
-          backgroundColor: "#FFF5F7",
-        },
-        ".MuiInputLabel-root": {
-          color: "#AD1457",
-        },
-        ".MuiOutlinedInput-notchedOutline": {
-          borderColor: "#FF80AB",
-        },
-      }}
-    />
+          <TextField
+            fullWidth
+            label="Delivery Address"
+            variant="outlined"
+            value={deliveryAddress}
+            onChange={(e) => setDeliveryAddress(e.target.value)}
+            sx={{
+              mb: 2,
+              ".MuiOutlinedInput-root": {
+                borderRadius: "12px",
+                backgroundColor: "#FFF5F7",
+              },
+              ".MuiInputLabel-root": {
+                color: "#AD1457",
+              },
+              ".MuiOutlinedInput-notchedOutline": {
+                borderColor: "#FF80AB",
+              },
+            }}
+          />
 
-    <Button
-      variant="contained"
-      sx={{
-        mt: 2,
-        width: "100%",
-        backgroundColor: "#FF4081",
-        color: "#fff",
-        fontWeight: "bold",
-        padding: "10px",
-        borderRadius: "8px",
-        "&:hover": {
-          backgroundColor: "#F50057",
-        },
-      }}
-      onClick={handleEmailSubmit}
-    >
-      Add to Cart
-    </Button>
-  </Box>
-</Modal>
-
+          <Button
+            variant="contained"
+            sx={{
+              mt: 2,
+              width: "100%",
+              backgroundColor: "#FF4081",
+              color: "#fff",
+              fontWeight: "bold",
+              padding: "10px",
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#F50057",
+              },
+            }}
+            onClick={handleAddressSubmit}
+          >
+            Add to Cart
+          </Button>
+        </Box>
+      </Modal>
 
       <LoginModal open={loginModalOpen} handleClose={() => setLoginModalOpen(false)} />
     </Box>
@@ -385,7 +383,3 @@ const Product = () => {
 };
 
 export default Product;
-
-
-
-
