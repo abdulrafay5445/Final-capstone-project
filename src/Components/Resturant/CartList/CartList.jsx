@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,7 +33,11 @@ function CartList({ open, handleClose }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [address, setAddress] = useState("");
-  const [addressError, setAddressError] = useState(false); // Track address validation error
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [paymentOption, setPaymentOption] = useState("");
+  const [addressError, setAddressError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+
   const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false);
 
   // Calculate the total price
@@ -41,24 +46,38 @@ function CartList({ open, handleClose }) {
   const handleOpenModal = () => {
     if (items.length > 0) {
       setIsModalOpen(true);
-      setIsCheckoutSuccess(false); // Reset success state for new checkouts
-      setAddressError(false); // Reset error state when reopening
+      setIsCheckoutSuccess(false);
+      setAddressError(false);
+      setPhoneError(false);
+  
     }
   };
 
   const handleCheckout = () => {
+    let isValid = true;
     if (!address.trim()) {
-      setAddressError(true); // Set error if address is empty
-    } else {
+      setAddressError(true);
+      isValid = false;
+    }
+    if (!phoneNumber.trim() || phoneNumber.length !== 11 || isNaN(phoneNumber)) {
+      setPhoneError(true);
+      isValid = false;
+    }
+  
+
+    if (isValid) {
       setIsCheckoutSuccess(true);
-      setAddressError(false); // Reset error on successful validation
     }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setAddress(""); // Reset address input on close
-    setAddressError(false); // Reset error state on close
+    setAddress("");
+    setPhoneNumber("");
+    setPaymentOption("");
+    setAddressError(false);
+    setPhoneError(false);
+  
   };
 
   return (
@@ -70,18 +89,17 @@ function CartList({ open, handleClose }) {
             display: "flex",
             flexDirection: "column",
             height: "100%",
-            backgroundColor: "#fce4ec", // Light pink background for the drawer
+            backgroundColor: "#fce4ec",
           }}
           role="presentation"
         >
-          {/* Header Section */}
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               padding: "16px",
-              backgroundColor: "#f8bbd0", // Medium pink background for the header
+              backgroundColor: "#f8bbd0",
             }}
           >
             <Typography variant="h6" color="#880e4f">
@@ -94,7 +112,6 @@ function CartList({ open, handleClose }) {
 
           <Divider />
 
-          {/* Cart Items List */}
           <List sx={{ flexGrow: 1, overflowY: "auto", backgroundColor: "#fce4ec" }}>
             {items && items.length > 0 ? (
               items.map((item, index) => (
@@ -138,7 +155,6 @@ function CartList({ open, handleClose }) {
 
           <Divider />
 
-          {/* Total Price Section */}
           {items.length > 0 && (
             <Box
               sx={{
@@ -146,7 +162,7 @@ function CartList({ open, handleClose }) {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                backgroundColor: "#f8bbd0", // Pink background for total price section
+                backgroundColor: "#f8bbd0",
               }}
             >
               <Typography variant="h6" color="#880e4f">
@@ -158,7 +174,6 @@ function CartList({ open, handleClose }) {
             </Box>
           )}
 
-          {/* Footer Section */}
           <Box sx={{ padding: "16px", textAlign: "center" }}>
             <Button
               sx={{
@@ -176,7 +191,6 @@ function CartList({ open, handleClose }) {
         </Box>
       </Drawer>
 
-      {/* Address Modal */}
       <Dialog open={isModalOpen} onClose={handleCloseModal}>
         <DialogTitle
           sx={{
@@ -191,20 +205,30 @@ function CartList({ open, handleClose }) {
               <CheckCircleOutlineIcon /> Your product is on the way!
             </Typography>
           ) : (
-            "Confirm Delivery Address"
+            "Confirm Delivery Details"
           )}
         </DialogTitle>
         {!isCheckoutSuccess && (
           <DialogContent sx={{ backgroundColor: "#fce4ec" }}>
             <TextField
               fullWidth
-              label="Address"
+              label="Delivery Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              error={addressError} // Highlight error field
-              helperText={addressError && "Please enter your delivery address"} // Show validation message
+              error={addressError}
+              helperText={addressError && "Please enter your delivery address"}
               sx={{ marginBottom: 2 }}
             />
+            <TextField
+              fullWidth
+              label="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              error={phoneError}
+              helperText={phoneError && "Please enter a valid phone number (11 digits)"}
+              sx={{ marginBottom: 2 }}
+            />
+          
           </DialogContent>
         )}
         <DialogActions sx={{ backgroundColor: "#f8bbd0", justifyContent: "center" }}>
